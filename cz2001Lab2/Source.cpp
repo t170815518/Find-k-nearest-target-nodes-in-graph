@@ -20,69 +20,43 @@ void addEdge(vector<Node*> *vectorOfNodes, int u, int v)
 		vectorOfNodes->push_back(newNode);
 	}
 
-	//Node *thisNode = new Node();
-	//Node *thatNode = new Node();
-	//thisNode->setThatNode(thatNode);
-	//thisNode->setid(u);
-	//thatNode->setThatNode(thisNode);
-	//thatNode->setid(v);
 	vectorOfNodes->at(u)->setid(u);
 	vectorOfNodes->at(u)->setThatNode(vectorOfNodes->at(v));
-	//vectorOfNodes->at(v)->setid(v);
-	//vectorOfNodes->at(v)->setThatNode(vectorOfNodes->at(u));
 }
 
-void printGraph(vector<int> adj[], int V)
+int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, int _numberOfHospitals)
 {
-	for (int v = 0; v < V; ++v)
-	{
-		cout << "\n Adjacency list of vertex " << v << "\n head ";
-		for (auto x : adj[v])
-			cout << "-> " << x;
-		printf("\n");
-	}
-}
-
-void printGraph(vector<Node*> vectorOfNodes, int V)
-{
-	//for (int i = 0; i < V; ++i)
-	//{
-	//	cout << "\n Adjacency list of vertex " << i << "\n head ";
-	//	for (auto x : vectorOfNodes.at[i)
-	//		cout << "-> " << x;
-	//	printf("\n");
-	//}
-}
-
-int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist, int _numberOfHospitals)
-{
+	int index = 0;
 	Node* originNode = _curNode;
 	int hospitalPassed = 0;
 	int crawl = -1;
-	int previousCrawl = -2;
-	bool *visited = new bool[_sizeOfNodes];
-	for (int i = 0; i < _sizeOfNodes; i++)
-	{
-		visited[i] = false;
-	}
+	//bool *visited = new bool[_sizeOfNodes];
+	vector<bool> visited(_sizeOfNodes, false);
 
 	// Create a queue for BFS 
 	list<Node*> queue;
 
 	// Mark the current node as visited and enqueue it 
 	visited[_curNode->getId()] = true;
-	(*_dist).at(_curNode->getId()) = 0;
+	//(*_dist).at(_curNode->getId()) = 0;
 	queue.push_back(_curNode);
 
-	// 'i' will be used to get all adjacent 
-	// vertices of a vertex 
 	list<Node*>::iterator it;
 	vector<int> nearestHospital;
+
+	if (originNode->getIsHospital())
+	{
+		nearestHospital.push_back(originNode->getId());
+		originNode->setNearestHospital(nearestHospital);
+		nearestHospital.clear();
+		++hospitalPassed;
+		if (_numberOfHospitals == 1)
+			return originNode->getId();
+	}
+
 	while (!queue.empty())
 	{
-		// Dequeue a vertex from queue and print it 
 		_curNode = queue.front();
-		//cout << _curNode->getId() << " ";
 		queue.pop_front();
 
 		// Get all adjacent vertices of the dequeued 
@@ -90,12 +64,10 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist
 		// then mark it visited and enqueue it 
 		for (int i = 0; i != _curNode->getVectorOfOtherNodes().size(); ++i)
 		{
-			//i = _vectorOfNodes.at(_curNode)->getVectorOfOtherNodes().at(i)->getId();
 			if (!visited[_curNode->getVectorOfOtherNodes().at(i)->getId()])
 			{
 				visited[_curNode->getVectorOfOtherNodes().at(i)->getId()] = true;
-				(*_dist)[_curNode->getVectorOfOtherNodes().at(i)->getId()] = (*_dist)[_curNode->getId()]+1;
-
+				//(*_pred).push_back(_curNode->getId());
 				(*_pred)[_curNode->getVectorOfOtherNodes().at(i)->getId()] = _curNode->getId();
 				queue.push_back(_curNode->getVectorOfOtherNodes().at(i));
 				if (_curNode->getVectorOfOtherNodes().at(i)->getIsHospital() == true)
@@ -106,6 +78,11 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist
 						nearestHospital.push_back((*_pred)[crawl]);
 						crawl = (*_pred)[crawl];
 					}
+					//while ((*_pred).size() != index) {
+					//	nearestHospital.push_back((*_pred)[index]);
+					//	++index;
+					//	crawl = (*_pred)[index];
+					//}
 					originNode->setNearestHospital(nearestHospital);
 					nearestHospital.clear();
 					++hospitalPassed;
@@ -120,32 +97,20 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist
 
 string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfNodes,int _numberOfHospitals)
 {
-	// predecessor[i] array stores predecessor of 
-	// i and distance array stores distance of i 
-	// from s 
-
 	vector<int> pred(_sizeOfNodes, -1);
-	vector<int> dist(_sizeOfNodes, INT_MAX);
-	int dest = BFS(_sizeOfNodes, _vectorOfNodes.at(src), &pred, &dist, _numberOfHospitals);
-	if (dest < 0) {
-		return to_string(src) + " no hospitals found\n";
-	}
-
-	// vector path stores the shortest path 
-	//vector<int> path;
-	//int crawl = dest;
-	//path.push_back(crawl);
-	//while (pred[crawl] != -1) {
-	//	path.push_back(pred[crawl]);
-	//	crawl = pred[crawl];
+	//vector<int> dist(_sizeOfNodes, INT_MAX);
+	int dest = BFS(_sizeOfNodes, _vectorOfNodes.at(src), &pred, _numberOfHospitals);
+	//if (dest < 0) {
+	//	return to_string(src) + " no hospitals found\n";
 	//}
-
-	// printing path from source to destination 
-	//cout << "\nPath is::\n";
 
 	string line = "";
 	vector<vector<int>> vectorOfNearestHospitals = _vectorOfNodes.at(src)->getNearestHospital();
 	vector<int> vectorOfNearestHospital;
+	if (vectorOfNearestHospitals.size() == 0)
+	{
+		return to_string(src) + " no hospitals found\n";
+	}
 	for (int i = 0; i < vectorOfNearestHospitals.size(); ++i)
 	{
 		vectorOfNearestHospital = vectorOfNearestHospitals.at(i);
@@ -159,16 +124,9 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 				line += to_string(_vectorOfNodes.at(vectorOfNearestHospital.at(j))->getId()) + ">";
 		}
 		line += "SP:" + to_string(vectorOfNearestHospital.size() - 1) + "\t";
-		//if (_vectorOfNodes.at(path[i])->getIsHospital())
-		//{
-		//	line += "[" + to_string(path[i]) + "]" + ">";
-		//}
-		//else
-		//	line += to_string(path[i]) + ">";
 	}
+	line += "noOfHospital:" + to_string(vectorOfNearestHospitals.size()) + "\t";
 
-	// distance from source is in distance array 
-	//line += "\tSP: " + to_string(dist[dest]) + "\n";
 	line += "\n";
 	return line;
 }
@@ -176,18 +134,18 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 void main()
 {
 	int numberOfHospitalsToFind;
-	std::chrono::steady_clock::time_point beginReadFile = std::chrono::steady_clock::now();
 	string graphFileName;
 	graphFileName = "roadNet-CA.txt";
 
-	//cout << "Input file name: ";
-	//cin >> graphFileName;
-	
+	cout << "Input file name: ";
+	cin >> graphFileName;
+	std::chrono::steady_clock::time_point beginReadFile = std::chrono::steady_clock::now();
 	std::ifstream infile(graphFileName);
 	if (!infile)
 	{
 		cout << graphFileName + " not found" << endl;
 		cin.get();
+		return;
 	}
 	string line;
 	vector<Node*> vectorOfNodes;
@@ -203,12 +161,16 @@ void main()
 	}
 	infile.close();
 	infile.clear();
+	std::chrono::steady_clock::time_point endReadFile = std::chrono::steady_clock::now();
+	std::cout << "Parse graph Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(endReadFile - beginReadFile).count() << "[s]" << std::endl;
+	std::cout << "Parse graph Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endReadFile - beginReadFile).count() << "[ns]" << std::endl;
 
 	infile.open("hospital.txt");
 	if (!infile)
 	{
 		cout << "hospital.txt not found" << endl;
 		cin.get();
+		return;
 	}
 	while (std::getline(infile, line))
 	{
@@ -224,30 +186,21 @@ void main()
 	}
 	infile.close();
 	infile.clear();
-
-	std::chrono::steady_clock::time_point endReadFile = std::chrono::steady_clock::now();
-
-	std::fstream ofile;
-	ofile.open("output.txt", std::ios::out | std::ios::app);
-	ofile.close();
-	ofile.open("output.txt", std::ios::in | std::ios::out | std::ios::app);
-	//ofile << "Writing this to a file.\n";
-	//ofstream ofile;
-	//ofile.open("output.txt");
+	
+	ofstream ofile;
+	ofile.open("output.txt");
 	string stringOutput = "";
 
 	std::chrono::steady_clock::time_point beginOutputFile = std::chrono::steady_clock::now();
 	for (int i = 0; i < vectorOfNodes.size(); ++i)
 	{
-		//cout << i << endl;
+
 		stringOutput += printShortestDistance(vectorOfNodes, i, vectorOfNodes.size(), numberOfHospitalsToFind);
 	}
 	std::chrono::steady_clock::time_point endOutputFile = std::chrono::steady_clock::now();
 	ofile << stringOutput;
 	ofile.close();
 
-	std::cout << "Parse graph Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(endReadFile - beginReadFile).count() << "[s]" << std::endl;
-	std::cout << "Parse graph Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endReadFile - beginReadFile).count() << "[ns]" << std::endl;
 	std::cout << "BFS Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(endOutputFile - beginOutputFile).count() << "[s]" << std::endl;
 	std::cout << "BFS Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endOutputFile - beginOutputFile).count() << "[ns]" << std::endl;
 
