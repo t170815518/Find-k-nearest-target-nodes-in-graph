@@ -82,7 +82,7 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist
 	{
 		// Dequeue a vertex from queue and print it 
 		_curNode = queue.front();
-		cout << _curNode->getId() << " ";
+		//cout << _curNode->getId() << " ";
 		queue.pop_front();
 
 		// Get all adjacent vertices of the dequeued 
@@ -128,9 +128,7 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 	vector<int> dist(_sizeOfNodes, INT_MAX);
 	int dest = BFS(_sizeOfNodes, _vectorOfNodes.at(src), &pred, &dist, _numberOfHospitals);
 	if (dest < 0) {
-		cout << "Given source and destination"
-			<< " are not connected";
-		return "error";
+		return to_string(src) + " no hospitals found\n";
 	}
 
 	// vector path stores the shortest path 
@@ -178,9 +176,19 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 void main()
 {
 	int numberOfHospitalsToFind;
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	std::chrono::steady_clock::time_point beginReadFile = std::chrono::steady_clock::now();
+	string graphFileName;
+	graphFileName = "roadNet-CA.txt";
 
-	std::ifstream infile("roadNet-CA.txt");
+	//cout << "Input file name: ";
+	//cin >> graphFileName;
+	
+	std::ifstream infile(graphFileName);
+	if (!infile)
+	{
+		cout << graphFileName + " not found" << endl;
+		cin.get();
+	}
 	string line;
 	vector<Node*> vectorOfNodes;
 	while (std::getline(infile, line))
@@ -197,6 +205,11 @@ void main()
 	infile.clear();
 
 	infile.open("hospital.txt");
+	if (!infile)
+	{
+		cout << "hospital.txt not found" << endl;
+		cin.get();
+	}
 	while (std::getline(infile, line))
 	{
 		std::istringstream iss(line);
@@ -212,10 +225,7 @@ void main()
 	infile.close();
 	infile.clear();
 
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[µs]" << std::endl;
-	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
-
+	std::chrono::steady_clock::time_point endReadFile = std::chrono::steady_clock::now();
 
 	std::fstream ofile;
 	ofile.open("output.txt", std::ios::out | std::ios::app);
@@ -225,12 +235,21 @@ void main()
 	//ofstream ofile;
 	//ofile.open("output.txt");
 	string stringOutput = "";
+
+	std::chrono::steady_clock::time_point beginOutputFile = std::chrono::steady_clock::now();
 	for (int i = 0; i < vectorOfNodes.size(); ++i)
 	{
+		//cout << i << endl;
 		stringOutput += printShortestDistance(vectorOfNodes, i, vectorOfNodes.size(), numberOfHospitalsToFind);
 	}
+	std::chrono::steady_clock::time_point endOutputFile = std::chrono::steady_clock::now();
 	ofile << stringOutput;
 	ofile.close();
+
+	std::cout << "Parse graph Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(endReadFile - beginReadFile).count() << "[s]" << std::endl;
+	std::cout << "Parse graph Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endReadFile - beginReadFile).count() << "[ns]" << std::endl;
+	std::cout << "BFS Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(endOutputFile - beginOutputFile).count() << "[s]" << std::endl;
+	std::cout << "BFS Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endOutputFile - beginOutputFile).count() << "[ns]" << std::endl;
 
 	cin.get();
 }
