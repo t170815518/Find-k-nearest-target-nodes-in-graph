@@ -10,6 +10,13 @@ Node::Node(Node * _thatNode, int _id)
 	id = _id;
 }
 
+Node::Node(Node * _thatNode, int _id, bool _isHospital)
+{
+	vectorOfOtherNodes.push_back(_thatNode);
+	id = _id;
+	isHospital = _isHospital;
+}
+
 void Node::setThatNode(Node * _thatNode)
 {
 	if (_thatNode == nullptr)
@@ -25,6 +32,16 @@ void Node::setid(int _id)
 	id = _id;
 }
 
+void Node::setIsHospital(bool _isHospital)
+{
+	isHospital = _isHospital;
+}
+
+void Node::setNearestHospital(vector<Node*> _nearestHospital)
+{
+	nearestHospital = _nearestHospital;
+}
+
 Node * Node::getThatNode(int _thatNodeId)
 {
 	for (int i = 0; i < vectorOfOtherNodes.size(); ++i)
@@ -38,5 +55,15 @@ Node * Node::getThatNode(int _thatNodeId)
 int Node::getId()
 {
 	return id;
+}
+
+bool Node::getIsHospital()
+{
+	return isHospital;
+}
+
+vector<Node*> Node::getVectorOfOtherNodes()
+{
+	return vectorOfOtherNodes;
 }
 
