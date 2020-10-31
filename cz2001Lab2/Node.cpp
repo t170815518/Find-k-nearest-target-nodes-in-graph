@@ -37,9 +37,9 @@ void Node::setIsHospital(bool _isHospital)
 	isHospital = _isHospital;
 }
 
-void Node::setNearestHospital(vector<Node*> _nearestHospital)
+void Node::setNearestHospital(vector<int> _nearestHospital)
 {
-	nearestHospital = _nearestHospital;
+	nearestHospital.push_back(_nearestHospital);
 }
 
 Node * Node::getThatNode(int _thatNodeId)
@@ -65,5 +65,10 @@ bool Node::getIsHospital()
 vector<Node*> Node::getVectorOfOtherNodes()
 {
 	return vectorOfOtherNodes;
+}
+
+vector<vector<int>> Node::getNearestHospital()
+{
+	return nearestHospital;
 }
 

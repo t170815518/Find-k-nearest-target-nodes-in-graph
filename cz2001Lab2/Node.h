@@ -8,7 +8,7 @@ class Node
 {
 private:
 	vector<Node*> vectorOfOtherNodes;
-	vector<Node*> nearestHospital;
+	vector<vector<int>> nearestHospital;
 	int id;
 	bool isHospital;
 public:
@@ -18,11 +18,12 @@ public:
 	void setThatNode(Node *_thatNode);
 	void setid(int _id);
 	void setIsHospital(bool _isHospital);
-	void setNearestHospital(vector<Node*> _nearestHospital);
+	void setNearestHospital(vector<int> _nearestHospital);
 
 	Node* getThatNode(int _thatNodeId);
 	int getId();
 	bool getIsHospital();
 	vector<Node*> getVectorOfOtherNodes();
+	vector<vector<int>> getNearestHospital();
 };
 

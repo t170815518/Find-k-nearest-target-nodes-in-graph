@@ -54,8 +54,12 @@ void printGraph(vector<Node*> vectorOfNodes, int V)
 	//}
 }
 
-int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist)
+int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist, int _numberOfHospitals)
 {
+	Node* originNode = _curNode;
+	int hospitalPassed = 0;
+	int crawl = -1;
+	int previousCrawl = -2;
 	bool *visited = new bool[_sizeOfNodes];
 	for (int i = 0; i < _sizeOfNodes; i++)
 	{
@@ -63,7 +67,7 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist
 	}
 
 	// Create a queue for BFS 
-	vector<Node*> queue;
+	list<Node*> queue;
 
 	// Mark the current node as visited and enqueue it 
 	visited[_curNode->getId()] = true;
@@ -73,13 +77,13 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist
 	// 'i' will be used to get all adjacent 
 	// vertices of a vertex 
 	list<Node*>::iterator it;
-
+	vector<int> nearestHospital;
 	while (!queue.empty())
 	{
 		// Dequeue a vertex from queue and print it 
 		_curNode = queue.front();
 		cout << _curNode->getId() << " ";
-		queue.erase(queue.begin());
+		queue.pop_front();
 
 		// Get all adjacent vertices of the dequeued 
 		// vertex s. If a adjacent has not been visited,  
@@ -87,7 +91,6 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist
 		for (int i = 0; i != _curNode->getVectorOfOtherNodes().size(); ++i)
 		{
 			//i = _vectorOfNodes.at(_curNode)->getVectorOfOtherNodes().at(i)->getId();
-			Node* tempNode;
 			if (!visited[_curNode->getVectorOfOtherNodes().at(i)->getId()])
 			{
 				visited[_curNode->getVectorOfOtherNodes().at(i)->getId()] = true;
@@ -97,7 +100,17 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist
 				queue.push_back(_curNode->getVectorOfOtherNodes().at(i));
 				if (_curNode->getVectorOfOtherNodes().at(i)->getIsHospital() == true)
 				{
-					return _curNode->getVectorOfOtherNodes().at(i)->getId();
+					crawl = _curNode->getVectorOfOtherNodes().at(i)->getId();
+					nearestHospital.push_back(crawl);
+					while ((*_pred)[crawl] != -1) {
+						nearestHospital.push_back((*_pred)[crawl]);
+						crawl = (*_pred)[crawl];
+					}
+					originNode->setNearestHospital(nearestHospital);
+					nearestHospital.clear();
+					++hospitalPassed;
+					if (hospitalPassed == _numberOfHospitals)
+						return _curNode->getVectorOfOtherNodes().at(i)->getId();
 				}
 			}
 		}
@@ -105,7 +118,7 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, vector<int>* _dist
 	return -1;
 }
 
-void printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfNodes)
+string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfNodes,int _numberOfHospitals)
 {
 	// predecessor[i] array stores predecessor of 
 	// i and distance array stores distance of i 
@@ -113,34 +126,58 @@ void printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfNod
 
 	vector<int> pred(_sizeOfNodes, -1);
 	vector<int> dist(_sizeOfNodes, INT_MAX);
-	int dest = BFS(_sizeOfNodes, _vectorOfNodes.at(src), &pred, &dist);
+	int dest = BFS(_sizeOfNodes, _vectorOfNodes.at(src), &pred, &dist, _numberOfHospitals);
 	if (dest < 0) {
 		cout << "Given source and destination"
 			<< " are not connected";
-		return;
+		return "error";
 	}
 
 	// vector path stores the shortest path 
-	vector<int> path;
-	int crawl = dest;
-	path.push_back(crawl);
-	while (pred[crawl] != -1) {
-		path.push_back(pred[crawl]);
-		crawl = pred[crawl];
+	//vector<int> path;
+	//int crawl = dest;
+	//path.push_back(crawl);
+	//while (pred[crawl] != -1) {
+	//	path.push_back(pred[crawl]);
+	//	crawl = pred[crawl];
+	//}
+
+	// printing path from source to destination 
+	//cout << "\nPath is::\n";
+
+	string line = "";
+	vector<vector<int>> vectorOfNearestHospitals = _vectorOfNodes.at(src)->getNearestHospital();
+	vector<int> vectorOfNearestHospital;
+	for (int i = 0; i < vectorOfNearestHospitals.size(); ++i)
+	{
+		vectorOfNearestHospital = vectorOfNearestHospitals.at(i);
+		for (int j = vectorOfNearestHospital.size()-1; j >= 0; --j)
+		{
+			if (_vectorOfNodes.at(vectorOfNearestHospital.at(j))->getIsHospital())
+			{
+				line += "[" + to_string(_vectorOfNodes.at(vectorOfNearestHospital.at(j))->getId()) + "]" + ">";
+			}
+			else
+				line += to_string(_vectorOfNodes.at(vectorOfNearestHospital.at(j))->getId()) + ">";
+		}
+		line += "SP:" + to_string(vectorOfNearestHospital.size() - 1) + "\t";
+		//if (_vectorOfNodes.at(path[i])->getIsHospital())
+		//{
+		//	line += "[" + to_string(path[i]) + "]" + ">";
+		//}
+		//else
+		//	line += to_string(path[i]) + ">";
 	}
 
 	// distance from source is in distance array 
-	cout << "Shortest path length is : "
-		<< dist[dest];
-
-	// printing path from source to destination 
-	cout << "\nPath is::\n";
-	for (int i = path.size() - 1; i >= 0; i--)
-		cout << path[i] << " ";
+	//line += "\tSP: " + to_string(dist[dest]) + "\n";
+	line += "\n";
+	return line;
 }
 
 void main()
 {
+	int numberOfHospitalsToFind;
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
 	std::ifstream infile("roadNet-CA.txt");
@@ -163,9 +200,11 @@ void main()
 	while (std::getline(infile, line))
 	{
 		std::istringstream iss(line);
-		int a, b;
+		int a;
 		if (!(iss >> a))
 		{
+			line.erase(0, 1);
+			numberOfHospitalsToFind = stoi(line);
 			continue;
 		} // error
 		vectorOfNodes.at(a)->setIsHospital(true);
@@ -177,6 +216,17 @@ void main()
 	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[µs]" << std::endl;
 	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 
-	printShortestDistance(vectorOfNodes, 0, vectorOfNodes.size());
+
+	//ofile << "Writing this to a file.\n";
+	ofstream ofile;
+	ofile.open("output.txt");
+	string stringOutput = "";
+	for (int i = 0; i < vectorOfNodes.size(); ++i)
+	{
+		stringOutput += printShortestDistance(vectorOfNodes, i, vectorOfNodes.size(), numberOfHospitalsToFind);
+	}
+	ofile << stringOutput;
+	ofile.close();
+
 	cin.get();
 }
