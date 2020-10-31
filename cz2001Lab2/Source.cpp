@@ -217,9 +217,13 @@ void main()
 	std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() << "[ns]" << std::endl;
 
 
+	std::fstream ofile;
+	ofile.open("output.txt", std::ios::out | std::ios::app);
+	ofile.close();
+	ofile.open("output.txt", std::ios::in | std::ios::out | std::ios::app);
 	//ofile << "Writing this to a file.\n";
-	ofstream ofile;
-	ofile.open("output.txt");
+	//ofstream ofile;
+	//ofile.open("output.txt");
 	string stringOutput = "";
 	for (int i = 0; i < vectorOfNodes.size(); ++i)
 	{
