@@ -138,7 +138,7 @@ void main()
 	graphFileName = "roadNet-CA.txt";
 
 	cout << "Input file name: ";
-	cin >> graphFileName;
+	getline(cin, graphFileName);
 	std::chrono::steady_clock::time_point beginReadFile = std::chrono::steady_clock::now();
 	std::ifstream infile(graphFileName);
 	if (!infile)
@@ -162,8 +162,8 @@ void main()
 	infile.close();
 	infile.clear();
 	std::chrono::steady_clock::time_point endReadFile = std::chrono::steady_clock::now();
-	std::cout << "Parse graph Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(endReadFile - beginReadFile).count() << "[s]" << std::endl;
-	std::cout << "Parse graph Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endReadFile - beginReadFile).count() << "[ns]" << std::endl;
+	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::seconds>(endReadFile - beginReadFile).count() << "[s]" << std::endl;
+	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endReadFile - beginReadFile).count() << "[ns]" << std::endl;
 
 	infile.open("hospital.txt");
 	if (!infile)
@@ -201,8 +201,8 @@ void main()
 	ofile << stringOutput;
 	ofile.close();
 
-	std::cout << "BFS Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(endOutputFile - beginOutputFile).count() << "[s]" << std::endl;
-	std::cout << "BFS Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endOutputFile - beginOutputFile).count() << "[ns]" << std::endl;
+	std::cout << "BFS time taken = " << std::chrono::duration_cast<std::chrono::seconds>(endOutputFile - beginOutputFile).count() << "[s]" << std::endl;
+	std::cout << "BFS time taken = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endOutputFile - beginOutputFile).count() << "[ns]" << std::endl;
 
 	cin.get();
 }
