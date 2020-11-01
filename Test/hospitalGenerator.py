@@ -3,6 +3,10 @@ from random import sample
 
 class HospitalGenerator:
     def __init__(self, dataset_path):
+        """
+
+        :param dataset_path: the path of the dataset
+        """
         self.max_nodeID = -1
         with open(dataset_path, 'r') as f:
             for line in f:
@@ -24,7 +28,15 @@ class HospitalGenerator:
         self.nodes = [x for x in range(self.max_nodeID+1)]
 
     def generate(self, k=5, numbers=[1, 5, 10, 25, 50, 100, 200, 300, 500, 1000, 5000]):
+        """
+
+        :param k: number of nearest hospitals
+        :param numbers: number of hospitals you want to generate
+        :return: no return value, but the hospital files will be created automatically
+        """
         for number in numbers:
+            if number < k:
+                continue
             print("Generating hospitals ({})...".format(number))
             hospital_number = number
             hospitals = sample(self.nodes, hospital_number)
@@ -36,5 +48,5 @@ class HospitalGenerator:
 
 
 if __name__ == '__main__':
-    g = HospitalGenerator("dataset/roadNet-PA.txt")
+    g = HospitalGenerator("dataset/roadNet-CA/roadNet-CA.txt")
     g.generate()
