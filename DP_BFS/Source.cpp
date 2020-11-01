@@ -9,6 +9,7 @@
 
 using namespace std;
 
+
 void addEdge(vector<Node*> *vectorOfNodes, int u, int v)
 {
 	int increaseVectorSize = u;
@@ -43,6 +44,8 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, int _numberOfHospi
 	list<Node*>::iterator it;
 	vector<int> nearestHospital;
 
+    // when the node is hospital
+    //FIXME: when the node is a hospital, there is a method to handle it. Note that we should continue searching/expanding the hospital node until another (k-1)-nearest hospitals are found. (you can imagine the case : N->Hospital->Hospital). The look-up table vector of this hospital node now should be vector = [id_of_this_hospital, 0,] (the rest of the vector will updated along the countinuous searching)
 	if (originNode->getIsHospital())
 	{
 		nearestHospital.push_back(originNode->getId());
@@ -62,8 +65,9 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, int _numberOfHospi
 		// vertex s. If a adjacent has not been visited,  
 		// then mark it visited and enqueue it 
 		for (int i = 0; i != _curNode->getVectorOfOtherNodes().size(); ++i)
+            /*FIXME: now we can conduct the table look up in this section. The logic here is to expand the children of this node, firstly, check if the children's result is stored previously (e.g. isValidLookUpEntry[child_id] == 1), if not, continue searching as you would do in normal BFS, but you need to know the vectors containing nearest k hospitals and their id (in the same form in lookUpTable, [hospital_id, distance, ..., hospital_id, distance], the shape should be [2*k, 1]); if yes, then you skip expanding this node, because you already know the result. After collecting all vectors of the children, compare it, and we can obtain the result very quickly. (see this update part in lab report!)*/
 		{
-			if (!visited[_curNode->getVectorOfOtherNodes().at(i)->getId()])
+			if (!visited[_curNode->getVectorOfOtherNodes().at(i)->getId()])   // to void cylic dead loop
 			{
 				visited[_curNode->getVectorOfOtherNodes().at(i)->getId()] = true;
 				//(*_pred).push_back(_curNode->getId());
@@ -111,6 +115,7 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, int _numberOfHospi
 				//}
 			}
 		}
+    // FIXME: update the vectors here -- lookUpTable = [Hospital_id, distance, Hospital_id, distance, ...]; it is like a key-value pair, every 2 elements should be treated together as (hospital_id, distance). Since we have obtained the k neareast hospitals for this node, we can make this node, i, isValidLookUpEntry[i] == True, meaning we can look it up now.
 	}
 	return -1;
 }
@@ -154,10 +159,11 @@ int main()
 {
 	int numberOfHospitalsToFind;
 	string graphFileName, hospitalFileName;
-	graphFileName = "roadNet-PA.txt";
-	hospitalFileName = "5000_hospital.txt";
-	//cout << "Input file name: ";
-	//getline(cin, graphFileName);
+	graphFileName = "roadNet-CA.txt";
+    
+    //parse the graph file
+	cout << "Input file name: ";
+	getline(cin, graphFileName);
 	std::chrono::steady_clock::time_point beginReadFile = std::chrono::steady_clock::now();
 	std::ifstream infile(graphFileName);
 	if (!infile)
@@ -183,9 +189,16 @@ int main()
 	std::chrono::steady_clock::time_point endReadFile = std::chrono::steady_clock::now();
 	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::seconds>(endReadFile - beginReadFile).count() << "[s]" << std::endl;
 	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endReadFile - beginReadFile).count() << "[ns]" << std::endl;
-
-	//cout << "Input hospital file's name: ";
-	//getline(cin, hospitalFileName);
+    
+    
+    // create the look-up table
+    // FIXME: pass these two vectors to BFS and printShortestPath, they will be used.
+    //vector<vector<int> > lookUpTable (vectorOfNodes.size(), 2*k);
+    //vector<vector<int> > isValidLookUpEntry (vectorOfNodes.size(), 1);
+    
+    // parse the hospital file
+	cout << "Input hospital file's name: ";
+	getline(cin, hospitalFileName);
 	infile.open(hospitalFileName);
 	if (!infile)
 	{
@@ -193,7 +206,6 @@ int main()
 		cin.get();
 		return 0;
 	}
-
 	while (std::getline(infile, line))
 	{
 		std::istringstream iss(line);
@@ -212,11 +224,16 @@ int main()
 	ofstream ofile;
 	ofile.open("output.txt");
 	string stringOutput = "";
-
+    
+    // start BFS searching and write to the file
 	std::chrono::steady_clock::time_point beginOutputFile = std::chrono::steady_clock::now();
+    /* FIXME:
+     we can do a minor trick here. instead of start from 0 every time, we can start from nodes adjoint to
+     hospitals first, so that they are faster to find the result and their result is prone to be looked up.
+     */
 	for (int i = 0; i < vectorOfNodes.size(); ++i)
 	{
-
+        // use BFS for every node, starting from 0
 		stringOutput += printShortestDistance(vectorOfNodes, i, vectorOfNodes.size(), numberOfHospitalsToFind);
 	}
 	std::chrono::steady_clock::time_point endOutputFile = std::chrono::steady_clock::now();
