@@ -98,10 +98,9 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 {
 	vector<int> pred(_sizeOfNodes, -1);
 	//vector<int> dist(_sizeOfNodes, INT_MAX);
+	if (_vectorOfNodes.at(src)->getId() < 0)
+		return to_string(src) + ": does not exist\n";
 	int dest = BFS(_sizeOfNodes, _vectorOfNodes.at(src), &pred, _numberOfHospitals);
-	//if (dest < 0) {
-	//	return to_string(src) + " no hospitals found\n";
-	//}
 
 	string line = "";
 	vector<vector<int>> vectorOfNearestHospitals = _vectorOfNodes.at(src)->getNearestHospital();
@@ -183,7 +182,7 @@ void main()
 			line.erase(0, 1);
 			numberOfHospitalsToFind = stoi(line);
 			continue;
-		} // error
+		}
 		vectorOfNodes.at(a)->setIsHospital(true);
 	}
 	infile.close();

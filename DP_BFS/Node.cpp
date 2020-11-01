@@ -2,6 +2,7 @@
 
 Node::Node()
 {
+	id = -1;
 }
 
 Node::Node(Node * _thatNode, int _id)
