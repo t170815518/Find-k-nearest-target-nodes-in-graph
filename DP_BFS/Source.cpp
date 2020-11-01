@@ -69,6 +69,7 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, int _numberOfHospi
 				//(*_pred).push_back(_curNode->getId());
 				(*_pred)[_curNode->getVectorOfOtherNodes().at(i)->getId()] = _curNode->getId();
 				queue.push_back(_curNode->getVectorOfOtherNodes().at(i));
+
 				if (_curNode->getVectorOfOtherNodes().at(i)->getIsHospital() == true)
 				{
 					crawl = _curNode->getVectorOfOtherNodes().at(i)->getId();
@@ -88,6 +89,26 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, int _numberOfHospi
 					if (hospitalPassed == _numberOfHospitals)
 						return _curNode->getVectorOfOtherNodes().at(i)->getId();
 				}
+
+				//else if (_curNode->getVectorOfOtherNodes().at(i)->getNearestHospital().size() >= 1 && _curNode->getVectorOfOtherNodes().at(i)->getNearestHospital().size() <= queue.size()-1)
+				//{
+				//	for (int j = 0; j < _curNode->getVectorOfOtherNodes().at(i)->getNearestHospital().at(0).size(); ++j)
+				//	{
+				//		nearestHospital.push_back(_curNode->getVectorOfOtherNodes().at(i)->getNearestHospital().at(0).at(j));
+				//	}
+				//	crawl = _curNode->getVectorOfOtherNodes().at(i)->getNearestHospital().at(0).back();
+				//	//nearestHospital.push_back(crawl);
+				//	while ((*_pred)[crawl] != -1) {
+				//		nearestHospital.push_back((*_pred)[crawl]);
+				//		crawl = (*_pred)[crawl];
+				//	}
+
+				//	originNode->setNearestHospital(nearestHospital);
+				//	nearestHospital.clear();
+				//	++hospitalPassed;
+				//	if (hospitalPassed == _numberOfHospitals)
+				//		return _curNode->getVectorOfOtherNodes().at(i)->getId();
+				//}
 			}
 		}
 	}
@@ -101,7 +122,7 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 	if (_vectorOfNodes.at(src)->getId() < 0)
 		return to_string(src) + ": does not exist\n";
 	int dest = BFS(_sizeOfNodes, _vectorOfNodes.at(src), &pred, _numberOfHospitals);
-
+	_vectorOfNodes.at(src)->setCheckedNearestHospitals(true);
 	string line = "";
 	vector<vector<int>> vectorOfNearestHospitals = _vectorOfNodes.at(src)->getNearestHospital();
 	vector<int> vectorOfNearestHospital;
@@ -133,10 +154,10 @@ int main()
 {
 	int numberOfHospitalsToFind;
 	string graphFileName, hospitalFileName;
-	graphFileName = "roadNet-CA.txt";
-
-	cout << "Input file name: ";
-	getline(cin, graphFileName);
+	graphFileName = "roadNet-PA.txt";
+	hospitalFileName = "5000_hospital.txt";
+	//cout << "Input file name: ";
+	//getline(cin, graphFileName);
 	std::chrono::steady_clock::time_point beginReadFile = std::chrono::steady_clock::now();
 	std::ifstream infile(graphFileName);
 	if (!infile)
@@ -163,8 +184,8 @@ int main()
 	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::seconds>(endReadFile - beginReadFile).count() << "[s]" << std::endl;
 	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endReadFile - beginReadFile).count() << "[ns]" << std::endl;
 
-	cout << "Input hospital file's name: ";
-	getline(cin, hospitalFileName);
+	//cout << "Input hospital file's name: ";
+	//getline(cin, hospitalFileName);
 	infile.open(hospitalFileName);
 	if (!infile)
 	{
@@ -205,6 +226,6 @@ int main()
 	std::cout << "BFS time taken = " << std::chrono::duration_cast<std::chrono::seconds>(endOutputFile - beginOutputFile).count() << "[s]" << std::endl;
 	std::cout << "BFS time taken = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endOutputFile - beginOutputFile).count() << "[ns]" << std::endl;
 
-	cin.get();
+	//cin.get();
 	return 1;
 }

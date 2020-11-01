@@ -3,12 +3,14 @@
 Node::Node()
 {
 	id = -1;
+	checkedNearestHospitals = false;
 }
 
 Node::Node(Node * _thatNode, int _id)
 {
 	vectorOfOtherNodes.push_back(_thatNode);
 	id = _id;
+	checkedNearestHospitals = false;
 }
 
 Node::Node(Node * _thatNode, int _id, bool _isHospital)
@@ -16,6 +18,7 @@ Node::Node(Node * _thatNode, int _id, bool _isHospital)
 	vectorOfOtherNodes.push_back(_thatNode);
 	id = _id;
 	isHospital = _isHospital;
+	checkedNearestHospitals = false;
 }
 
 void Node::setThatNode(Node * _thatNode)
@@ -41,6 +44,11 @@ void Node::setIsHospital(bool _isHospital)
 void Node::setNearestHospital(vector<int> _nearestHospital)
 {
 	nearestHospital.push_back(_nearestHospital);
+}
+
+void Node::setCheckedNearestHospitals(bool _checkedNearestHospitals)
+{
+	checkedNearestHospitals = _checkedNearestHospitals;
 }
 
 Node * Node::getThatNode(int _thatNodeId)
@@ -71,5 +79,10 @@ vector<Node*> Node::getVectorOfOtherNodes()
 vector<vector<int>> Node::getNearestHospital()
 {
 	return nearestHospital;
+}
+
+bool Node::getCheckedNearestHospitals()
+{
+	return checkedNearestHospitals;
 }
 
