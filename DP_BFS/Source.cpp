@@ -131,7 +131,7 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 	return line;
 }
 
-void main()
+int main()
 {
 	int numberOfHospitalsToFind;
 	string graphFileName;
@@ -145,7 +145,7 @@ void main()
 	{
 		cout << graphFileName + " not found" << endl;
 		cin.get();
-		return;
+		return 0;
 	}
 	string line;
 	vector<Node*> vectorOfNodes;
@@ -170,7 +170,7 @@ void main()
 	{
 		cout << "hospital.txt not found" << endl;
 		cin.get();
-		return;
+		return 0;
 	}
 	while (std::getline(infile, line))
 	{
@@ -205,4 +205,5 @@ void main()
 	std::cout << "BFS time taken = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endOutputFile - beginOutputFile).count() << "[ns]" << std::endl;
 
 	cin.get();
+	return 1;
 }
