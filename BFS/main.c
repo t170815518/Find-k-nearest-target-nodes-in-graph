@@ -54,9 +54,9 @@ Node** read(char* file_path, int* node_num){
         printf("Error opening file\n");
     }
     char line[500];
-
     while (!feof(fp)){
-        fgets(line, 499, fp);
+		if (fgets(line, 499, fp) == NULL)
+			break;
         if (line[0]!='#'){
             line[strlen(line)-1] = '\0';
             temp = strtok(line,"\t");
@@ -188,7 +188,7 @@ void findHospitalAllNodes(Node** all_nodes, int node_num, char* file_path){
     int* path = malloc(sizeof(int)*MAX_DISTANCE);
     for(int i = 0; i<node_num; i++){
 
-        printf("Node %d\n",i);
+        //printf("Node %d\n",i);
         findNearestHospital(all_nodes[i], node_num, &distance, predecessor, path);
 
         fprintf(fp,"%d %d ",i,distance);

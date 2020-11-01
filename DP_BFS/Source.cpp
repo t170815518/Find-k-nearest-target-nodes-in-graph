@@ -30,7 +30,6 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, int _numberOfHospi
 	Node* originNode = _curNode;
 	int hospitalPassed = 0;
 	int crawl = -1;
-	//bool *visited = new bool[_sizeOfNodes];
 	vector<bool> visited(_sizeOfNodes, false);
 
 	// Create a queue for BFS 
@@ -99,10 +98,9 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 {
 	vector<int> pred(_sizeOfNodes, -1);
 	//vector<int> dist(_sizeOfNodes, INT_MAX);
+	if (_vectorOfNodes.at(src)->getId() < 0)
+		return to_string(src) + ": does not exist\n";
 	int dest = BFS(_sizeOfNodes, _vectorOfNodes.at(src), &pred, _numberOfHospitals);
-	//if (dest < 0) {
-	//	return to_string(src) + " no hospitals found\n";
-	//}
 
 	string line = "";
 	vector<vector<int>> vectorOfNearestHospitals = _vectorOfNodes.at(src)->getNearestHospital();
@@ -134,7 +132,7 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 int main()
 {
 	int numberOfHospitalsToFind;
-	string graphFileName;
+	string graphFileName, hospitalFileName;
 	graphFileName = "roadNet-CA.txt";
 
 	cout << "Input file name: ";
@@ -165,13 +163,16 @@ int main()
 	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::seconds>(endReadFile - beginReadFile).count() << "[s]" << std::endl;
 	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endReadFile - beginReadFile).count() << "[ns]" << std::endl;
 
-	infile.open("hospital.txt");
+	cout << "Input hospital file's name: ";
+	getline(cin, hospitalFileName);
+	infile.open(hospitalFileName);
 	if (!infile)
 	{
-		cout << "hospital.txt not found" << endl;
+		cout << "The hospital file is not found" << endl;
 		cin.get();
 		return 0;
 	}
+
 	while (std::getline(infile, line))
 	{
 		std::istringstream iss(line);
@@ -181,7 +182,7 @@ int main()
 			line.erase(0, 1);
 			numberOfHospitalsToFind = stoi(line);
 			continue;
-		} // error
+		}
 		vectorOfNodes.at(a)->setIsHospital(true);
 	}
 	infile.close();
