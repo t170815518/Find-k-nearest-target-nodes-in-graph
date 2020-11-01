@@ -30,7 +30,6 @@ int BFS(int _sizeOfNodes, Node* _curNode, vector<int>* _pred, int _numberOfHospi
 	Node* originNode = _curNode;
 	int hospitalPassed = 0;
 	int crawl = -1;
-	//bool *visited = new bool[_sizeOfNodes];
 	vector<bool> visited(_sizeOfNodes, false);
 
 	// Create a queue for BFS 
@@ -134,7 +133,7 @@ string printShortestDistance(vector<Node*> _vectorOfNodes, int src, int _sizeOfN
 void main()
 {
 	int numberOfHospitalsToFind;
-	string graphFileName;
+	string graphFileName, hospitalFileName;
 	graphFileName = "roadNet-CA.txt";
 
 	cout << "Input file name: ";
@@ -165,13 +164,16 @@ void main()
 	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::seconds>(endReadFile - beginReadFile).count() << "[s]" << std::endl;
 	std::cout << "Parse graph time taken = " << std::chrono::duration_cast<std::chrono::nanoseconds> (endReadFile - beginReadFile).count() << "[ns]" << std::endl;
 
-	infile.open("hospital.txt");
+	cout << "Input hospital file's name: ";
+	getline(cin, hospitalFileName);
+	infile.open(hospitalFileName);
 	if (!infile)
 	{
-		cout << "hospital.txt not found" << endl;
+		cout << "The hospital file is not found" << endl;
 		cin.get();
 		return;
 	}
+
 	while (std::getline(infile, line))
 	{
 		std::istringstream iss(line);
