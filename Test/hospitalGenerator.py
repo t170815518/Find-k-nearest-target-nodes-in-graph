@@ -1,4 +1,5 @@
 from random import sample
+import os
 
 
 class HospitalGenerator:
@@ -27,7 +28,7 @@ class HospitalGenerator:
         assert self.max_nodeID >= 0
         self.nodes = [x for x in range(self.max_nodeID+1)]
 
-    def generate(self, k=5, numbers=[1, 5, 10, 25, 50, 100, 200, 300, 500, 1000, 5000]):
+    def generate(self, k=20, numbers=[1000]):
         """
 
         :param k: number of nearest hospitals
@@ -40,7 +41,7 @@ class HospitalGenerator:
             print("Generating hospitals ({})...".format(number))
             hospital_number = number
             hospitals = sample(self.nodes, hospital_number)
-            with open("{}_hospital.txt".format(number), 'w+') as f:
+            with open(os.path.join("dataset", "roadNet-PA", "hospital.txt"), 'w+') as f:
                 f.write("# {}\n".format(k))
                 for hospital in hospitals:
                     f.write("{}\n".format(hospital))
@@ -48,5 +49,5 @@ class HospitalGenerator:
 
 
 if __name__ == '__main__':
-    g = HospitalGenerator("dataset/roadNet-CA/roadNet-CA.txt")
+    g = HospitalGenerator("dataset/roadNet-PA/graph.txt")
     g.generate()
