@@ -28,7 +28,7 @@ class HospitalGenerator:
         assert self.max_nodeID >= 0
         self.nodes = [x for x in range(self.max_nodeID+1)]
 
-    def generate(self, k=20, numbers=[1000]):
+    def generate(self, k=3, numbers=[]):
         """
 
         :param k: number of nearest hospitals
@@ -37,11 +37,11 @@ class HospitalGenerator:
         """
         for number in numbers:
             if number < k:
-                continue
+                k = number
             print("Generating hospitals ({})...".format(number))
             hospital_number = number
             hospitals = sample(self.nodes, hospital_number)
-            with open(os.path.join("dataset", "roadNet-PA", "hospital.txt"), 'w+') as f:
+            with open(os.path.join("dataset", "random_graph", "hospital.txt"), 'w+') as f:
                 f.write("# {}\n".format(k))
                 for hospital in hospitals:
                     f.write("{}\n".format(hospital))
@@ -49,5 +49,5 @@ class HospitalGenerator:
 
 
 if __name__ == '__main__':
-    g = HospitalGenerator("dataset/roadNet-PA/graph.txt")
-    g.generate()
+    g = HospitalGenerator("dataset/random_graph/10size_2degree.txt")
+    g.generate(k=3, numbers=[round(0.1*g.max_nodeID)])   # 0.1: ratio of hospitals
