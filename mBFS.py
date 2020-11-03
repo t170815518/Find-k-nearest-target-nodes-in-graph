@@ -3,7 +3,7 @@ import os
 from math import inf
 
 
-def improved_BFS(graph, args, is_print=True):
+def mBFS(graph, args, is_print=True):
     node_num = max(graph.keys()) + 1
     hospitals = Node.hospitals[:]
     hospitals_layer_queue = {}
