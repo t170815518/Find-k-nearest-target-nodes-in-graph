@@ -35,7 +35,7 @@ class RandomGraphGenerator:
         return adjacency_list
 
     def export(self, file_name, adjacency_list):
-        with open(os.path.join("dataset", "random_graph", "graph.txt"), 'w+') as f:
+        with open(os.path.join("dataset", "random_graph", file_name), 'w+') as f:
             for i in adjacency_list.keys():
                 try:
                     for adj_node in adjacency_list[i]:
@@ -45,5 +45,5 @@ class RandomGraphGenerator:
 
 
 if __name__ == '__main__':
-    g = RandomGraphGenerator(node_size=[10], average_degree=[1])
+    g = RandomGraphGenerator(node_size=[100], average_degree=[2])
     g.execute()

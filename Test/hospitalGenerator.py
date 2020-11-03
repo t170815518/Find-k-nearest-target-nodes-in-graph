@@ -49,5 +49,5 @@ class HospitalGenerator:
 
 
 if __name__ == '__main__':
-    g = HospitalGenerator("dataset/random_graph/10size_2degree.txt")
-    g.generate(k=3, numbers=[round(0.1*g.max_nodeID)])   # 0.1: ratio of hospitals
+    g = HospitalGenerator("dataset/random_graph/graph.txt")  # change the graph file path here
+    g.generate(k=2, numbers=[4])   # 0.1: ratio of hospitals
